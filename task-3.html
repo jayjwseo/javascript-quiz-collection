@@ -1,0 +1,24 @@
+<script>
+    //--------------------------------------------------------------------------
+    /* Q3 Solution -
+    This task involved modifying the function isArray to accept an optional callback as the last argument. arguments.length contains the number of arguments passed to the function, and this was used with a conditional (ternary) operator to check if a callback was passed. If a callback was passed the result is returned with the callback function and if not only the result is returned. Two tests were also implemented - resultWithoutCallBack passes only one argument (an array) then logs the result; resultWithCallBack passes two arguments (an array and a callback) where the callback function logs the result */
+
+    (function () {
+        // isArray accepts an optional callback as the last argument
+        function isArray(array, callback) {
+            // Checks whether the first argument is an Array and saves the result to isItArray
+            const isItArray = typeof (array) === "object" && (array instanceof Array);
+            // If two arguments are passed (i.e. with callback), returns with a callback function
+            // Else returns isItArray value (true or false)
+            return arguments.length === 2 ? callback(isItArray) : isItArray; // Conditional (ternary) operator for succinct code
+        }
+        // Test without a second argument(callback); output - isArray: true
+        const resultWithoutCallBack = console.log("isArray: " + isArray(["item1", "item2", "item3"]));
+        // Test with a second argument(callback); output - with callback - isArray: true
+        const resultWithCallBack = isArray(["item1", "item2", "item3"], (isItArray) => { console.log("with callback - isArray: " + isItArray) });
+    }());
+
+        //--------------------------------------------------------------------------
+    /* Q3 Thought process -
+    This was a straightforward task, and my focus was on researching the best way to check if the second(optional) argument is present. I found a reliable solution (arguments.length) on stackoverflow, then read the property documentation on MDN to get a solid understanding. */
+</script>

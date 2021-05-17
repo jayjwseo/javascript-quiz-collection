@@ -1,0 +1,82 @@
+<script>
+    //--------------------------------------------------------------------------
+    /* Q1 Solution -
+    There are two reasons why the original code does not work as intended. Firstly, this keyword defaults to the window object, hence, when 'length' is declared within the function using var keyword the value is not accessible using 'this.length'. This was solved by removing the comma and having 'length' declared without using a keyword (this is not the best practice and was addressed in alternate solution 3). Secondly, with setTimeout being a asynchronous web API, the for loop finishes running and index is updated with the last value (10), by the time it prints index to console. In order to fix this, I have created a new IIFE (function scope) around setTimeout with a variable i that saves index value; this implementation creates a unique scope and saves unique value of index for each iteration */
+
+    (function () {
+        var index; //Removed the comma here as this keyword defaults to the global object (window)
+        length = 10; //window.length = 10
+        for (index = 0; index < this.length; index++) {
+            // Created a new IIFE (function scope)
+            (function () {
+                var i = index; // Save index to i
+                setTimeout(function () {
+                    console.log(i); // Log i
+                }, 100);
+            })();
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 1 -
+    Above can also be achieved by passing loop variable index to the function that set Timeout */
+
+    (function () {
+        var index;
+        length = 10;
+        for (index = 0; index < this.length; index++) {
+            (function (i) {
+                setTimeout(function () {
+                    console.log(i);
+                }, 100);
+            })(index); // Pass index
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 2 -
+    Same as above, but here I simply factored out the setTimeout function and invoked it in the for loop. */
+
+    (function () {
+        var index;
+        length = 10;
+        for (index = 0; index < this.length; index++) {
+            printIndex(index); // Invoked here immediately
+        }
+    })();
+    // Factored out setTimeout function
+    function printIndex(index) {
+        setTimeout(function () {
+            console.log(index);
+        }, 100);
+    };
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 3 -
+    With ES6, 'let' can be used for a cleaner solution. Every iteration creates a separate scope where unique value of index is created and stored in memory. These values are then accessed by the asynchronous web API, setTimeout(). */
+
+    (() => {
+        let length = 10; // Used 'let' to declare index
+        // Changed this.length to length
+        for (let index = 0; index < length; index++) {
+            // Used an arrow function for succinctness
+            setTimeout(() => { console.log(index) }, 100);
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 3 with each console.log(index) logging one second apart -
+    By multiplying milliseconds by index, each index will print one second apart. */
+
+    (() => {
+        let length = 10;
+        for (let index = 0; index < length; index++) {
+            setTimeout(() => { console.log(index) }, 1000 * index); // Multiply milliseconds by index
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Thought process -
+    My first approach was to use 'let', as I have encountered a similar question in the past. However, I wanted to find other solutions that do not use ES6. I mainly focused on researching the difference in exactly how var and let works with for loop. After digesting the whole concept, I realized how different solutions end up doing the same process to output the result. */
+
+</script>

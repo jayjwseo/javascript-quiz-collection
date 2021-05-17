@@ -1,0 +1,30 @@
+<script>
+    //--------------------------------------------------------------------------
+    /* Q6 Solution -
+    Firing any event listener, by default, these events are going to be captured and bubbled, allowing event delegation. However, in this instance the propagation is needed to be stopped in order to prevent calling parent elements' events. To implement this, event.stopPropagation() was inserted into each event listener function. */
+
+    (function () {
+        let boxes = [
+            document.getElementById("box1"),
+            document.getElementById("box2"),
+            document.getElementById("box3")
+        ];
+        console.log(boxes);
+        boxes[0].addEventListener("mousemove", function (event) {
+            console.log("Box 1");
+            event.stopPropagation(); // Prevents capturing and bubbling
+        });
+        boxes[1].addEventListener("mousemove", function (event) {
+            console.log("Box 2");
+            event.stopPropagation(); // Prevents capturing and bubbling
+        });
+        boxes[2].addEventListener("mousemove", function (event) {
+            console.log("Box 3");
+            event.stopPropagation(); // Prevents capturing and bubbling
+        });
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q6 Thought process -
+    This was another straightforward task as I have encountered the same problem when building the project management board application. The application consists of lists and task cards with layers of nested elements listening to various events. As I have used in the past projects, I chose to implement event.stopPropagation() in this task to prevent capturing and bubbling */
+</script>

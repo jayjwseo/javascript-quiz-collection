@@ -1,0 +1,36 @@
+<script>
+    //--------------------------------------------------------------------------
+    /* Q4 Solution -
+    To minimize the number of repaint and reflow required, creating elements without requiring so many steps was essential. To achieve this, I used template literals to generate element for each 'name' object in the data, minimizing the steps required for creating each element. Also, for succinct code, I replaced for loop with forEach to iterate over the data, eliminating unnecessary variables. */
+
+    (function () {
+        let content = document.getElementById("content"),
+            data = [{
+                id: 1,
+                name: "John",
+                color: "green"
+            }, {
+                id: 2,
+                name: "Sally",
+                color: "pink"
+            }, {
+                id: 3,
+                name: "Andrew",
+                color: "blue"
+            }, {
+                id: 4,
+                name: "Katie",
+                color: "purple"
+            }];
+        // Changed 'for loop' to 'forEach' for succinct code
+        data.forEach((name) => {
+            // Optimized the original code using template literals to generate element for each 'name' object
+            // Appended generated elements to content.innerHTML using addition assignment operator
+            content.innerHTML += `<li id="${name.id}" style="color:${name.color};"><strong>${name.name}</strong></li>`;
+        })
+    })();
+
+        //--------------------------------------------------------------------------
+    /* Q4 Thought process -
+    This was a good task with an opportunity for me to research and level up my understandings of repaint and reflow in the browser. After realising what is required for the optimization, base on my past experience building a full featured project management board web application, I immediately decided on using template literals along with forEach method to optimize the code. */
+</script>

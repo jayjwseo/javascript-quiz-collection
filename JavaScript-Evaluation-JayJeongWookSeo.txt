@@ -1,0 +1,222 @@
+    //--------------------------------------------------------------------------
+    /* Q1 Solution -
+    There are two reasons why the original code does not work as intended. Firstly, this keyword defaults to the window object, hence, when 'length' is declared within the function using var keyword the value is not accessible using 'this.length'. This was solved by removing the comma and having 'length' declared without using a keyword (this is not the best practice and was addressed in alternate solution 3). Secondly, with setTimeout being a asynchronous web API, the for loop finishes running and index is updated with the last value (10), by the time it prints index to console. In order to fix this, I have created a new IIFE (function scope) around setTimeout with a variable i that saves index value; this implementation creates a unique scope and saves unique value of index for each iteration */
+
+    (function () {
+        var index; //Removed the comma here as this keyword defaults to the global object (window)
+        length = 10; //window.length = 10
+        for (index = 0; index < this.length; index++) {
+            // Created a new IIFE (function scope)
+            (function () {
+                var i = index; // Save index to i
+                setTimeout(function () {
+                    console.log(i); // Log i
+                }, 100);
+            })();
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 1 -
+    Above can also be achieved by passing loop variable index to the function that set Timeout */
+
+    (function () {
+        var index;
+        length = 10;
+        for (index = 0; index < this.length; index++) {
+            (function (i) {
+                setTimeout(function () {
+                    console.log(i);
+                }, 100);
+            })(index); // Pass index
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 2 -
+    Same as above, but here I simply factored out the setTimeout function and invoked it in the for loop. */
+
+    (function () {
+        var index;
+        length = 10;
+        for (index = 0; index < this.length; index++) {
+            printIndex(index); // Invoked here immediately
+        }
+    })();
+    // Factored out setTimeout function
+    function printIndex(index) {
+        setTimeout(function () {
+            console.log(index);
+        }, 100);
+    };
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 3 -
+    With ES6, 'let' can be used for a cleaner solution. Every iteration creates a separate scope where unique value of index is created and stored in memory. These values are then accessed by the asynchronous web API, setTimeout(). */
+
+    (() => {
+        let length = 10; // Used 'let' to declare index
+        // Changed this.length to length
+        for (let index = 0; index < length; index++) {
+            // Used an arrow function for succinctness
+            setTimeout(() => { console.log(index) }, 100);
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Alternate solution 3 with each console.log(index) logging one second apart -
+    By multiplying milliseconds by index, each index will print one second apart. */
+
+    (() => {
+        let length = 10;
+        for (let index = 0; index < length; index++) {
+            setTimeout(() => { console.log(index) }, 1000 * index); // Multiply milliseconds by index
+        }
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q1 Thought process -
+    My first approach was to use 'let', as I have encountered a similar question in the past. However, I wanted to find other solutions that do not use ES6. I mainly focused on researching the difference in exactly how var and let works with for loop. After digesting the whole concept, I realized how different solutions end up doing the same process to output the result. */
+
+   //--------------------------------------------------------------------------
+    /* Q2 Solution -
+    Closure gives an inner function access to an outer function's scope. In order to demonstrate this, I have modified the original code to have the outer function receive 'name' and 'age' then return the inner function (Hello) which has access to the outer variables. Using a constant 'foo', I saved the reference to the instance of the function hello() created with the arguments passed to the outer function ('John' and 33). Lastly, I printed foo() to demonstrate that the instance of hello() maintains a reference to its lexical environment where 'John' and 33 remain available for use */
+
+    // outerFunction returns inner function named hello()
+    function outerFunction(name, age) {
+        // Closure giving access to an outer function’s scope from an inner function
+        return function hello() {
+            // hello() has access to the outer variables - name and age
+            return name + ", who is " + age + " years old, says hi!";
+        }
+    }
+    const foo = outerFunction('John', 33); // Reference to the instance of the function hello() created when outerFunction() is run
+    console.log(foo()) // Instance of hello() maintains a reference to its lexical environment where 'John' and 33 remain available for use
+
+    //Output - John, who is 33 years old, says hi!
+
+    //--------------------------------------------------------------------------
+    /* Q2 Thought process -
+    I mainly focused on implementing a solution that will best demonstrate the essence of a closure. After determining the expected output and what needs to be there to be a closure, I read through MDN's documentation to look for the best code structure to demonstrate this clearly. */
+
+     //--------------------------------------------------------------------------
+    /* Q3 Solution -
+    This task involved modifying the function isArray to accept an optional callback as the last argument. arguments.length contains the number of arguments passed to the function, and this was used with a conditional (ternary) operator to check if a callback was passed. If a callback was passed the result is returned with the callback function and if not only the result is returned. Two tests were also implemented - resultWithoutCallBack passes only one argument (an array) then logs the result; resultWithCallBack passes two arguments (an array and a callback) where the callback function logs the result */
+
+    (function () {
+        // isArray accepts an optional callback as the last argument
+        function isArray(array, callback) {
+            // Checks whether the first argument is an Array and saves the result to isItArray
+            const isItArray = typeof (array) === "object" && (array instanceof Array);
+            // If two arguments are passed (i.e. with callback), returns with a callback function
+            // Else returns isItArray value (true or false)
+            return arguments.length === 2 ? callback(isItArray) : isItArray; // Conditional (ternary) operator for succinct code
+        }
+        // Test without a second argument(callback); output - isArray: true
+        const resultWithoutCallBack = console.log("isArray: " + isArray(["item1", "item2", "item3"]));
+        // Test with a second argument(callback); output - with callback - isArray: true
+        const resultWithCallBack = isArray(["item1", "item2", "item3"], (isItArray) => { console.log("with callback - isArray: " + isItArray) });
+    }());
+
+        //--------------------------------------------------------------------------
+    /* Q3 Thought process -
+    This was a straightforward task, and my focus was on researching the best way to check if the second(optional) argument is present. I found a reliable solution (arguments.length) on stackoverflow, then read the property documentation on MDN to get a solid understanding. */
+
+     //--------------------------------------------------------------------------
+    /* Q4 Solution -
+    To minimize the number of repaint and reflow required, creating elements without requiring so many steps was essential. To achieve this, I used template literals to generate element for each 'name' object in the data, minimizing the steps required for creating each element. Also, for succinct code, I replaced for loop with forEach to iterate over the data, eliminating unnecessary variables. */
+
+    (function () {
+        let content = document.getElementById("content"),
+            data = [{
+                id: 1,
+                name: "John",
+                color: "green"
+            }, {
+                id: 2,
+                name: "Sally",
+                color: "pink"
+            }, {
+                id: 3,
+                name: "Andrew",
+                color: "blue"
+            }, {
+                id: 4,
+                name: "Katie",
+                color: "purple"
+            }];
+        // Changed 'for loop' to 'forEach' for succinct code
+        data.forEach((name) => {
+            // Optimized the original code using template literals to generate element for each 'name' object
+            // Appended generated elements to content.innerHTML using addition assignment operator
+            content.innerHTML += `<li id="${name.id}" style="color:${name.color};"><strong>${name.name}</strong></li>`;
+        })
+    })();
+
+        //--------------------------------------------------------------------------
+    /* Q4 Thought process -
+    This was a good task with an opportunity for me to research and level up my understandings of repaint and reflow in the browser. After realising what is required for the optimization, base on my past experience building a full featured project management board web application, I immediately decided on using template literals along with forEach method to optimize the code. */
+
+     //--------------------------------------------------------------------------
+    /* Q5 Solution -
+    Using NodeList.prototype.propertyName, it is possible to add a new method to NodeList object. To implement a chain-able DOM Wrapper, inside the function we should iterate NodeList, update node properties as desired, then return the updated NodeList to allow the next method to pick up and use the updated NodeList. Also, as most browsers support forEach() method of NodeList according to MDN, the line that converts NodeList into an array was removed for succinct code. */
+
+    (function () {
+        // Add method to NodeList object
+        NodeList.prototype.show = function () {
+            // Iterate NodeList using forEach() and update style for every node
+            this.forEach(function (node) {
+                node.style.display = "block";
+            });
+            // Return updated NodeList so that it is chain-able
+            return this;
+        }
+        NodeList.prototype.hide = function () {
+            this.forEach(function (node) {
+                node.style.display = "none";
+            });
+            return this;
+        }
+        // A new method added for testing; changes color to blue
+        NodeList.prototype.blue = function () {
+            this.forEach(function (node) {
+                node.style.color = "blue";
+            });
+            return this;
+        }
+        // Test chain-able DOM Wrapper starting hide(), show(), then blue(); output - block element with blue text
+        document.querySelectorAll("#test").hide().show().blue();
+    }());
+
+        //--------------------------------------------------------------------------
+    /* Q5 Thought process -
+    As the question was unclear to me at first, I broke the code into smaller pieces and searched important keywords like chain-able DOM wrapper. After understanding what each line does, the task became clear to me. I implemented the initial solution, then went through the code to find parts to refactor. Lastly, I created and added a new method for better testing approach. */
+
+     //--------------------------------------------------------------------------
+    /* Q6 Solution -
+    Firing any event listener, by default, these events are going to be captured and bubbled, allowing event delegation. However, in this instance the propagation is needed to be stopped in order to prevent calling parent elements' events. To implement this, event.stopPropagation() was inserted into each event listener function. */
+
+    (function () {
+        let boxes = [
+            document.getElementById("box1"),
+            document.getElementById("box2"),
+            document.getElementById("box3")
+        ];
+        console.log(boxes);
+        boxes[0].addEventListener("mousemove", function (event) {
+            console.log("Box 1");
+            event.stopPropagation(); // Prevents capturing and bubbling
+        });
+        boxes[1].addEventListener("mousemove", function (event) {
+            console.log("Box 2");
+            event.stopPropagation(); // Prevents capturing and bubbling
+        });
+        boxes[2].addEventListener("mousemove", function (event) {
+            console.log("Box 3");
+            event.stopPropagation(); // Prevents capturing and bubbling
+        });
+    })();
+
+    //--------------------------------------------------------------------------
+    /* Q6 Thought process -
+    This was another straightforward task as I have encountered the same problem when building the project management board application. The application consists of lists and task cards with layers of nested elements listening to various events. As I have used in the past projects, I chose to implement event.stopPropagation() in this task to prevent capturing and bubbling */

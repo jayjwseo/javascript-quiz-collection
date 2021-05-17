@@ -1,0 +1,36 @@
+<script>
+    //--------------------------------------------------------------------------
+    /* Q5 Solution -
+    Using NodeList.prototype.propertyName, it is possible to add a new method to NodeList object. To implement a chain-able DOM Wrapper, inside the function we should iterate NodeList, update node properties as desired, then return the updated NodeList to allow the next method to pick up and use the updated NodeList. Also, as most browsers support forEach() method of NodeList according to MDN, the line that converts NodeList into an array was removed for succinct code. */
+
+    (function () {
+        // Add method to NodeList object
+        NodeList.prototype.show = function () {
+            // Iterate NodeList using forEach() and update style for every node
+            this.forEach(function (node) {
+                node.style.display = "block";
+            });
+            // Return updated NodeList so that it is chain-able
+            return this;
+        }
+        NodeList.prototype.hide = function () {
+            this.forEach(function (node) {
+                node.style.display = "none";
+            });
+            return this;
+        }
+        // A new method added for testing; changes color to blue
+        NodeList.prototype.blue = function () {
+            this.forEach(function (node) {
+                node.style.color = "blue";
+            });
+            return this;
+        }
+        // Test chain-able DOM Wrapper starting hide(), show(), then blue(); output - block element with blue text
+        document.querySelectorAll("#test").hide().show().blue();
+    }());
+
+        //--------------------------------------------------------------------------
+    /* Q5 Thought process -
+    As the question was unclear to me at first, I broke the code into smaller pieces and searched important keywords like chain-able DOM wrapper. After understanding what each line does, the task became clear to me. I implemented the initial solution, then went through the code to find parts to refactor. Lastly, I created and added a new method for better testing approach. */
+</script>

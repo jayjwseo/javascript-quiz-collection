@@ -1,0 +1,22 @@
+<script>
+    //--------------------------------------------------------------------------
+    /* Q2 Solution -
+    Closure gives an inner function access to an outer function's scope. In order to demonstrate this, I have modified the original code to have the outer function receive 'name' and 'age' then return the inner function (Hello) which has access to the outer variables. Using a constant 'foo', I saved the reference to the instance of the function hello() created with the arguments passed to the outer function ('John' and 33). Lastly, I printed foo() to demonstrate that the instance of hello() maintains a reference to its lexical environment where 'John' and 33 remain available for use */
+
+    // outerFunction returns inner function named hello()
+    function outerFunction(name, age) {
+        // Closure giving access to an outer function’s scope from an inner function
+        return function hello() {
+            // hello() has access to the outer variables - name and age
+            return name + ", who is " + age + " years old, says hi!";
+        }
+    }
+    const foo = outerFunction('John', 33); // Reference to the instance of the function hello() created when outerFunction() is run
+    console.log(foo()) // Instance of hello() maintains a reference to its lexical environment where 'John' and 33 remain available for use
+
+    //Output - John, who is 33 years old, says hi!
+
+    //--------------------------------------------------------------------------
+    /* Q2 Thought process -
+    I mainly focused on implementing a solution that will best demonstrate the essence of a closure. After determining the expected output and what needs to be there to be a closure, I read through MDN's documentation to look for the best code structure to demonstrate this clearly. */
+</script>
